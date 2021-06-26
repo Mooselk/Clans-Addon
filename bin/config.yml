@@ -1,0 +1,28 @@
+settings:
+  worldName: "clansworld"
+  schematic: "file.schem"
+  shieldExpire: 24
+  serverSpawn: "world, 0, 72, 0"
+  
+  clanstop:
+    title: "&dTop clans:"
+    format: "&f - %ranking%. &d%clan_name% &f: %points%"
+    clan: "&f Your clan: %ranking%. &d%clan_name% &f: &d%points%"
+    pages: " &fShowing &d%page% &fof &d%pages%"
+  
+  raid:
+    maxBrokenSpawners: 5
+    maxItemsTaken: 15
+    prepTime: 30
+    raidTime: 300 
+    
+  boundries:
+    - "-1,1,-5,5"
+    - "1,1,5,5"
+    - "1,-1,5,-5"
+    - "-1,-1,-5,-5"
+  
+  spawns:
+    home: "5, 1, 0"
+    raiders: "8, 4, -10"
+    coreBlock: "0, 1, 0"

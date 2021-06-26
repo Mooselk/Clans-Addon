@@ -1,0 +1,14 @@
+main: me.kate.clans.ClansPlugin
+name: ClansAddon
+version: 1.0
+author: Kate
+depend: [Clans, SilkSpawners, WorldEdit, WorldGuard, Multiverse-Core]
+api-version: 1.16
+description: Plugin
+commands:
+  debug:
+    description: command
+  raid:
+    description: command
+  clanstop:
+    description: command

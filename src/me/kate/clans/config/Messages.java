@@ -1,0 +1,47 @@
+package me.kate.clans.config;
+
+import me.kate.clans.ClansPlugin;
+import net.md_5.bungee.api.ChatColor;
+
+public class Messages 
+{
+	private ClansPlugin plugin;
+	
+	public Messages(ClansPlugin plugin)
+	{
+		this.plugin = plugin;
+	}
+	
+	public static String NO_FACTION, NO_FACTIONS_FOUND, SHIELD_EXPIRED, 
+	SELECTED_FACTION, GRACE_TITLE_TOP_START, GRACE_TITLE_BOTTOM_START, 
+	GRACE_TITLE_TOP_END, GRACE_TITLE_BOTTOM_END, BOSSBAR_TIMER_GRACE, BOSSBAR_TIMER_RAID,
+	MAX_ITEMS_TAKEN, ITEM_TAKEN, INVALID_SIGN_ERROR, SPAWNER_BREAK_NO_FACTION,
+	SPAWNER_BREAK_RAIDED, SPAWNER_BREAK_MAX, SPAWNER_BROKEN;
+	
+	public void load()
+	{
+		NO_FACTION = color("NO_FACTION");
+		NO_FACTIONS_FOUND = color("NO_FACTIONS_FOUND");
+		SHIELD_EXPIRED = color("SHIELD_EXPIRED");
+		SELECTED_FACTION = color("SELECTED_FACTION");
+		BOSSBAR_TIMER_GRACE = color("BOSSBAR_TIMER_GRACE");
+		BOSSBAR_TIMER_RAID = color("BOSSBAR_TIMER_RAID");
+		GRACE_TITLE_TOP_START = color("GRACE_TITLE_TOP_START");
+		GRACE_TITLE_BOTTOM_START = color("GRACE_TITLE_BOTTOM_START");
+		GRACE_TITLE_TOP_END = color("GRACE_TITLE_TOP_END");
+		GRACE_TITLE_BOTTOM_END = color("GRACE_TITLE_BOTTOM_END");
+		MAX_ITEMS_TAKEN = color("MAX_ITEMS_TAKEN");
+		ITEM_TAKEN = color("ITEM_TAKEN");
+		INVALID_SIGN_ERROR = color("INVALID_SIGN_ERROR");
+		SPAWNER_BREAK_NO_FACTION = color("SPAWNER_BREAK_NO_FACTION");
+		SPAWNER_BREAK_RAIDED = color("SPAWNER_BREAK_RAIDED");
+		SPAWNER_BREAK_MAX = color("SPAWNER_BREAK_MAX");
+		SPAWNER_BROKEN = color("SPAWNER_BROKEN");
+		
+	}
+	
+	private String color(String c)
+	{
+		return ChatColor.translateAlternateColorCodes('&', plugin.getMessageConfig().getMessage(c));
+	}
+}
