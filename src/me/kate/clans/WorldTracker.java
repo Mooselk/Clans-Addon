@@ -1,9 +1,7 @@
-package me.kate.clans.config;
+package me.kate.clans;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-
-import me.kate.clans.ClansPlugin;
 
 public class WorldTracker 
 {	
@@ -14,8 +12,8 @@ public class WorldTracker
 		this.plugin = plugin;
 	}
 	
-	public Location nextLocation(final Location last) {
-        
+	public Location nextLocation(final Location last) 
+	{    
 		final int distance = 500;
         
         alignToDistance(last, distance);

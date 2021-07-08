@@ -6,8 +6,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.massivecraft.factions.FPlayer;
 import com.massivecraft.factions.FPlayers;
+import com.massivecraft.factions.util.LazyLocation;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import me.kate.clans.ClansPlugin;
+import me.kate.clans.objects.Boundry;
 import me.kate.clans.raids.WrappedFaction;
 
 public class PlayerJoinListener implements Listener
@@ -33,6 +37,21 @@ public class PlayerJoinListener implements Listener
 		if (faction.isRaiding())
 		{
 			faction.getRaid().getRaidBar().getBossBar().addPlayer(event.getPlayer());
+		}
+		
+		String id = player.getFactionId();
+		RegionManager rm = plugin.getRegionManager();
+		ProtectedRegion region = rm.getRegion(id + "-protect");
+		
+		if (region != null)
+		{			
+			player.getFaction().setCorners(
+					new LazyLocation(Boundry.getLocation(region.getMinimumPoint())), 
+					new LazyLocation(Boundry.getLocation(region.getMaximumPoint())));
+		}
+		else
+		{
+			plugin.getLogger().info("Unable to get region for faction + " + player.getFaction().getTag());
 		}
 	}
 }

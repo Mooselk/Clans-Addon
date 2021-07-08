@@ -3,6 +3,12 @@ settings:
   schematic: "file.schem"
   shieldExpire: 24
   serverSpawn: "world, 0, 72, 0"
+  baseClaimRadius: 8
+  
+  blockedCommands:
+    - tp
+    - tpa
+    - back
   
   clanstop:
     title: "&dTop clans:"
@@ -12,15 +18,44 @@ settings:
   
   raid:
     maxBrokenSpawners: 5
+    pointPercentage: 20
     maxItemsTaken: 15
     prepTime: 30
-    raidTime: 300 
+    raidTime: 300
     
-  boundries:
-    - "-1,1,-5,5"
-    - "1,1,5,5"
-    - "1,-1,5,-5"
-    - "-1,-1,-5,-5"
+  mainBoundry:
+    pointA:
+      x: 55
+      z: 55
+      
+    pointB:
+      x: -55
+      z: -55
+    
+  miniBoundries:
+    boundryA:
+      x1: -1
+      z1: 1
+      x2: -5
+      z2: 5
+      
+    boundryB:
+      x1: 1
+      z1: -1
+      x2: 5
+      z2: -5
+      
+    boundryC:
+      x1: 1
+      z1: -1
+      x2: 5
+      z2: -5
+      
+    boundryD:
+      x1: -1
+      z1: -1
+      x2: -5
+      z2: -5
   
   spawns:
     home: "5, 1, 0"

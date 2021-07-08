@@ -6,7 +6,7 @@
 	<classpathentry kind="lib" path="F:/Libraries/worldguard-bukkit-7.0.4.jar"/>
 	<classpathentry kind="lib" path="F:/Libraries/FastAsyncWorldEdit-Bukkit-1.16-669.jar"/>
 	<classpathentry kind="lib" path="F:/Libraries/SilkSpawners_1.jar"/>
-	<classpathentry kind="lib" path="F:/Servers/spigot-1.16.5/plugins/CustomClans.jar"/>
 	<classpathentry kind="lib" path="F:/Libraries/Multiverse-Core-4.2.2.jar"/>
+	<classpathentry kind="lib" path="F:/Servers/spigot-1.16.5/plugins/CustomClans.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -7,6 +7,8 @@ import com.massivecraft.factions.util.LazyLocation;
 
 import me.kate.clans.ClansPlugin;
 import me.kate.clans.config.Messages;
+import me.kate.clans.config.PluginConfig;
+import me.kate.clans.database.DatabaseManager.Mode;
 import me.kate.clans.objects.CoreBlock;
 import me.kate.clans.timer.Timer;
 import me.kate.clans.timer.TimerCallback;
@@ -17,18 +19,19 @@ public class Raid
 	private RaidParticipants parts;
 	private int itemsTaken, spawnersTaken, gracePeriod, raidTime;
 	private RaidBossBar raidBar;
-	
+	private PluginConfig config;
 	private Raid raid;
+	private boolean broken;
 	
 	public Raid(ClansPlugin plugin, RaidParticipants parts)
 	{
 		this.plugin = plugin;
 		this.parts = parts;
 		this.itemsTaken = 0;
-		this.raidTime = plugin.getPluginConfig().getRaidTime();
-		this.gracePeriod = plugin.getPluginConfig().getPrepTime();
+		this.config = plugin.getPluginConfig();
+		this.raidTime = config.getRaidTime();
+		this.gracePeriod = config.getPrepTime();
 		parts.setRaiding(this);
-		
 		this.raid = this;
 	}
 	
@@ -65,6 +68,16 @@ public class Raid
 	public RaidBossBar getRaidBar()
 	{
 		return this.raidBar;
+	}
+	
+	public void setCoreBroken(boolean broken)
+	{
+		this.broken = broken;
+	}
+	
+	public boolean hasBrokenCore()
+	{
+		return this.broken;
 	}
 	
 	public void start()
@@ -115,11 +128,8 @@ public class Raid
 			public void onComplete() 
 			{	
 				WrappedFaction defender = parts.getDefendingWrapper();
-				
 				CoreBlock block = new CoreBlock(plugin, defender.getId());
-				
 				LazyLocation location = defender.getFaction().getCenter();
-				
 				Location coreLocation = plugin.getPluginConfig().getSpawnFor("coreBlock", location.getLocation());
 				
 				int expire = plugin.getPluginConfig().getShieldExpireTime();
@@ -131,8 +141,16 @@ public class Raid
 				}
 				else
 				{
-					// attackers lose points
-					// defenders gain
+					// this might be backwards
+					plugin.getDatabase().adjustPercentagePoints( 	  //
+							parts.getDefendingFaction().getId(), 	  // Get defenders number of points
+							parts.getAttackingFaction().getId(), 	  // Set attackers points based on percentage of defenders
+							config.getPointPercent(), Mode.SUBTRACT); // Set percentage and mode
+
+					plugin.getDatabase().adjustPercentagePoints( //
+							parts.getAttackingFaction().getId(), // Get attackers number of points
+							parts.getDefendingFaction().getId(), // Set defenders points based on percentage of defenders
+							config.getPointPercent(), Mode.ADD); // Set percentage and mode
 				}
 				
 				parts.setRaiding(null);

@@ -4,6 +4,8 @@ import org.bukkit.Location;
 
 import com.sk89q.worldedit.math.BlockVector3;
 
+import me.kate.clans.ClansPlugin;
+
 public class Boundry 
 {
 	private int x, y, z;
@@ -125,7 +127,7 @@ public class Boundry
 		{
 			dz = dz + vector.getBlockZ();
 		}
-		return correct(BlockVector3.at(dx, y, dz));
+		return BlockVector3.at(dx, y, dz);
 	}
 	
 	public static Location translateLocation(int x, int y, int z, Location loc)
@@ -180,6 +182,15 @@ public class Boundry
 	public static BlockVector3 setVectorY(BlockVector3 vector, int y)
 	{
 		return BlockVector3.at(vector.getBlockX(), y, vector.getBlockY());
+	}
+	
+	public static Location getLocation(BlockVector3 vector) 
+	{
+		return new Location(ClansPlugin.getPlugin(ClansPlugin.class)
+				.getClansWorld(), 
+				vector.getBlockX(), 
+				vector.getBlockY(), 
+				vector.getBlockZ());
 	}
 	
 	@Override

@@ -8,6 +8,8 @@ import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.sk89q.worldguard.protection.managers.RegionManager;
+
 import me.kate.clans.calc.PointCalculation;
 import me.kate.clans.calc.PointCallback;
 import me.kate.clans.commands.RaidCommand;
@@ -15,12 +17,12 @@ import me.kate.clans.commands.TopCommand;
 import me.kate.clans.config.MessageConfig;
 import me.kate.clans.config.Messages;
 import me.kate.clans.config.PluginConfig;
-import me.kate.clans.config.WorldTracker;
 import me.kate.clans.database.DatabaseManager;
 import me.kate.clans.hooks.ClansHook;
 import me.kate.clans.hooks.WorldEditHook;
 import me.kate.clans.hooks.WorldGuardHook;
 import me.kate.clans.listeners.BlockBreakListener;
+import me.kate.clans.listeners.EntityDeathListener;
 import me.kate.clans.listeners.InventoryClickListener;
 import me.kate.clans.listeners.MonsterSpawnerListener;
 import me.kate.clans.listeners.PlayerInteractListener;
@@ -55,6 +57,7 @@ public class ClansPlugin extends JavaPlugin
 	private ClansTop top;
 	private ShieldTimer timer;
 	private Logger logger;
+	private RegionManager rmanager;
 	
 	@Override
 	public void onEnable()
@@ -95,6 +98,8 @@ public class ClansPlugin extends JavaPlugin
 		
 		this.world = worldBuilder.getWorld();
 		
+		this.rmanager = wgHook.getRegionManager(world);
+		
 		this.getServer().getPluginManager().registerEvents(new InventoryClickListener(this), this);
 		this.getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(this), this);
@@ -104,6 +109,7 @@ public class ClansPlugin extends JavaPlugin
 		this.getServer().getPluginManager().registerEvents(new FactionCreateListener(this), this);
 		this.getServer().getPluginManager().registerEvents(new FactionDisbandListener(this), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(this), this);
+		this.getServer().getPluginManager().registerEvents(new EntityDeathListener(this), this);
 		
 		this.getCommand("raid").setExecutor(new RaidCommand(this));
 		this.getCommand("clanstop").setExecutor(new TopCommand(this));
@@ -126,7 +132,7 @@ public class ClansPlugin extends JavaPlugin
 			@Override
 			public void onComplete(List<TopClan> clans) 
 			{
-				Bukkit.broadcastMessage("Finsihed updating clanstop!");
+				Bukkit.broadcastMessage("Finished updating clanstop!");
 			}
 		});
 	}
@@ -175,6 +181,11 @@ public class ClansPlugin extends JavaPlugin
 	public WorldGuardHook getWGHook()
 	{
 		return this.wgHook;
+	}
+	
+	public RegionManager getRegionManager()
+	{
+		return this.rmanager;
 	}
 	
 	public World getClansWorld()

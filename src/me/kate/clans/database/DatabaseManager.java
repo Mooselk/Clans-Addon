@@ -3,6 +3,7 @@ package me.kate.clans.database;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -104,9 +105,9 @@ public class DatabaseManager
 		SUBTRACT;
 	}
 	
-	public void addFaction(String factionId)
+	public void addFaction(String factionId, int points)
 	{
-		final String query = "INSERT INTO clanstop (clanId, points)" + " VALUES ('" + factionId + "', 0);";
+		final String query = "INSERT INTO clanstop (clanId, points)" + " VALUES ('" + factionId + "', " + points + ");";
 		
 		if (!execQuery(query))
 		{
@@ -124,31 +125,40 @@ public class DatabaseManager
 		}
 		else
 		{
-			plugin.getLogger().severe("Removed Faction (" + factionId + ") from database!");
+			plugin.getLogger().info("Removed Faction (" + factionId + ") from database!");
 		}
 	}
 	
 	public List<TopClan> getTopClans()
 	{
 		List<TopClan> clans = new ArrayList<>();
-		String query = "SELECT * FROM clanstop";
+		
+		final String query = "SELECT * FROM clanstop";
+		final ResultSet results = execRSQuery(query);
+		
+		try 
+		{
+			while (results.next()) 
+			{
+				String clanId = results.getString("clanId");
+			    int points = results.getInt("points");
+			    clans.add(new TopClan(clanId, points));
+			}
+		} 
+		catch (SQLException e) { e.printStackTrace(); } 
+		return clans;
+	}
+	
+	public ResultSet execRSQuery(String query)
+	{
+		ResultSet rs = null;
 		Connection conn = null;
 		try 
 		{
 			conn = connect();
-			
-			try (Statement stmt = conn.createStatement()) 
-			{
-			      ResultSet rs = stmt.executeQuery(query);
-			      while (rs.next()) 
-			      {
-			        String clanId = rs.getString("clanId");
-			        int points = rs.getInt("points");
-			        
-			        clans.add(new TopClan(clanId, points));
-			      }
-			      stmt.close();
-			}
+			PreparedStatement st = conn.prepareStatement(query);
+			rs = st.executeQuery();
+			st.close();
 		} 
 		catch (SQLException e)
 		{
@@ -166,8 +176,42 @@ public class DatabaseManager
 				e.printStackTrace();
 			}
 		}
+		return rs;
+	}
+	
+	public int getPoints(String factionId)
+	{
+		String query = "SELECT points FROM clanstop WHERE clanId = " + factionId + ";";
+		try 
+		{
+			return execRSQuery(query).getInt("points");
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public boolean adjustPercentagePoints(String otherId, String factionId, int percentage, Mode mode)
+	{
+		int points = this.getPoints(otherId);
+		String query = "UPDATE clanstop SET points = points @RDD# (" 
+				+ points + " * "+ percentage 
+				+ " / 100) WHERE clanId = " + factionId + ";";
+
+		switch (mode)
+		{
+			case ADD:
+				query = query.replace("@RDD#", "+");
+				break;
+				
+			case SUBTRACT:
+				query = query.replace("@RDD#", "-");
+				break;
+		}
 		
-		return clans;
+		return execQuery(query);
 	}
 	
 	public boolean adjustPoints(String factionId, int points, Mode mode)

@@ -8,8 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-public class Cuboid {
-
+public class Cuboid
+{
 	private final int xMin;
 	private final int xMax;
 	private final int yMin;
@@ -18,7 +18,10 @@ public class Cuboid {
 	private final int zMax;
 	private final World world;
 
-	public Cuboid(final Location point1, final Location point2) {
+	private Location point1, point2;
+	
+	public Cuboid(final Location point1, final Location point2)
+	{
 		this.xMin = Math.min(point1.getBlockX(), point2.getBlockX());
 		this.xMax = Math.max(point1.getBlockX(), point2.getBlockX());
 		this.yMin = Math.min(point1.getBlockY(), point2.getBlockY());
@@ -26,8 +29,21 @@ public class Cuboid {
 		this.zMin = Math.min(point1.getBlockZ(), point2.getBlockZ());
 		this.zMax = Math.max(point1.getBlockZ(), point2.getBlockZ());
 		this.world = point1.getWorld();
+		
+		this.point1 = point1;
+		this.point2 = point2;
 	}
 
+	public Location getPointA()
+	{
+		return this.point1;
+	}
+	
+	public Location getPointB()
+	{
+		return this.point2;
+	}
+	
 	// Changed from iterator, will probably throw an error
 	public ArrayList<Block> blockList() 
 	{
@@ -66,10 +82,23 @@ public class Cuboid {
 	
 	public Location getCenter() 
 	{
-		return new Location(this.world, (this.xMax - this.xMin) / 2 + this.xMin,
-				(this.yMax - this.yMin) / 2 + this.yMin, (this.zMax - this.zMin) / 2 + this.zMin);
+		return new Location(this.world, 
+				(this.xMax - this.xMin) / 2 + this.xMin,
+				(this.yMax - this.yMin) / 2 + this.yMin, 
+				(this.zMax - this.zMin) / 2 + this.zMin);
 	}
 
+	public boolean isIn(final Location loc) 
+	{
+		return loc.getWorld() == this.world 
+				&& loc.getBlockX() >= this.xMin
+				&& loc.getBlockX() <= this.xMax
+				&& loc.getBlockY() >= this.yMin 
+				&& loc.getBlockY() <= this.yMax
+				&& loc.getBlockZ() >= this.zMin
+				&& loc.getBlockZ() <= this.zMax;
+	}
+	
 	public int getHeight()
 	{
 		return this.yMax - this.yMin + 1;

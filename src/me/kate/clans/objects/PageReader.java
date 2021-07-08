@@ -60,7 +60,7 @@ public class PageReader
         
         if (page > pages)
         {
-            sender.sendMessage("infoUnknownChapter");
+            sender.sendMessage("infoUnknownPage");
             return;
         }
         

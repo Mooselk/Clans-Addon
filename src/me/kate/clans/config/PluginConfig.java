@@ -8,6 +8,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -72,25 +73,64 @@ public class PluginConfig
 		return loc;
 	}
 
-	public List<DoubleBound> getBoundries()
+	public DoubleBound getMainBound()
 	{
-		final List<DoubleBound> bounds = new ArrayList<>();
+		final String pointAx1 = getConfig().getString("settings.mainBoundry.pointA.x");
+		final String pointAz1 = getConfig().getString("settings.mainBoundry.pointA.z");
 		
-		for (String strBound : getConfig().getStringList("settings.boundries"))
-		{
-			String[] splitDBounds = strBound.replaceAll("\\s", "").split(",");
-			
-			bounds.add(new DoubleBound(
-					new Boundry(
-							splitDBounds[0], 
-							splitDBounds[1]), 
-					new Boundry(
-							splitDBounds[2], 
-							splitDBounds[3]))
-					);
-		}
-		return bounds;
+		final Boundry boundryA = new Boundry(pointAx1, pointAz1);
+		
+		final String pointAx2 = getConfig().getString("settings.mainBoundry.pointB.x");
+		final String pointAz2 = getConfig().getString("settings.mainBoundry.pointB.z");
+		
+		final Boundry boundryB = new Boundry(pointAx2, pointAz2);
+		
+		return new DoubleBound(boundryA, boundryB);
 	}
+	
+	public List<DoubleBound> getSubBoundries()
+	{
+		final List<DoubleBound> miniBounds = new ArrayList<>();
+		
+		for (String key : getConfig().getConfigurationSection("settings.miniBoundries").getKeys(false))
+		{
+			ConfigurationSection section = getConfig().getConfigurationSection("settings.miniBoundries" + key);
+			
+			String x1 = section.getString("x1");
+			String z1 = section.getString("z1");
+			
+			final Boundry boundA = new Boundry(x1, z1);
+			
+			String x2 = section.getString("x2");
+			String z2 = section.getString("z2");
+			
+			final Boundry boundB = new Boundry(x2, z2);
+			
+			miniBounds.add(new DoubleBound(boundA, boundB));
+		}
+		
+		return miniBounds;
+	}
+	
+//	public List<DoubleBound> getBoundries()
+//	{
+//		final List<DoubleBound> bounds = new ArrayList<>();
+//		
+//		for (String strBound : getConfig().getStringList("settings.boundries"))
+//		{
+//			String[] splitDBounds = strBound.replaceAll("\\s", "").split(",");
+//			
+//			bounds.add(new DoubleBound(
+//					new Boundry(
+//							splitDBounds[0], 
+//							splitDBounds[1]), 
+//					new Boundry(
+//							splitDBounds[2], 
+//							splitDBounds[3]))
+//					);
+//		}
+//		return bounds;
+//	}
 	
 	public Location getServerSpawn()
 	{
@@ -137,8 +177,23 @@ public class PluginConfig
 		return pluginConfiguration.getInt("settings.raid.raidTime");
 	}
 	
+	public List<String> getBlockedCommands()
+	{
+		return pluginConfiguration.getStringList("settings.blockedCommands");
+	}
+	
 	public int getShieldExpireTime()
 	{
 		return pluginConfiguration.getInt("settings.shieldExpire");
+	}
+	
+	public int getPointPercent()
+	{
+		return pluginConfiguration.getInt("settings.raid.pointPercentage");
+	}
+	
+	public int getClaimRadius()
+	{
+		return pluginConfiguration.getInt("settings.baseClaimRadius");
 	}
 }
