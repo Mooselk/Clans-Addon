@@ -94,7 +94,7 @@ public class PluginConfig
 		
 		for (String key : getConfig().getConfigurationSection("settings.miniBoundries").getKeys(false))
 		{
-			ConfigurationSection section = getConfig().getConfigurationSection("settings.miniBoundries" + key);
+			ConfigurationSection section = getConfig().getConfigurationSection("settings.miniBoundries." + key);
 			
 			String x1 = section.getString("x1");
 			String z1 = section.getString("z1");

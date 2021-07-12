@@ -4,14 +4,19 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.massivecraft.factions.Factions;
+import com.massivecraft.factions.util.LazyLocation;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import me.kate.clans.calc.PointCalculation;
 import me.kate.clans.calc.PointCallback;
+import me.kate.clans.commands.DebugCommand;
 import me.kate.clans.commands.RaidCommand;
 import me.kate.clans.commands.TopCommand;
 import me.kate.clans.config.MessageConfig;
@@ -31,11 +36,14 @@ import me.kate.clans.listeners.PlayerQuitListener;
 import me.kate.clans.listeners.SilkSpawnersSpawnerBreakListener;
 import me.kate.clans.listeners.factions.FactionCreateListener;
 import me.kate.clans.listeners.factions.FactionDisbandListener;
+import me.kate.clans.objects.Boundry;
 import me.kate.clans.objects.ClansTop;
 import me.kate.clans.objects.TopClan;
 import me.kate.clans.raids.RaidManager;
+import me.kate.clans.raids.WrappedFaction;
 import me.kate.clans.raids.WrappedFactionManager;
 import me.kate.clans.timer.ShieldTimer;
+import me.kate.clans.utils.Cuboid;
 import me.kate.clans.worlds.MultiverseWorldBuilder;
 import me.kate.clans.worlds.MultiverseWorldBuilder.Status;
 import me.kate.clans.worlds.generator.ClansChunkGenerator;
@@ -113,6 +121,7 @@ public class ClansPlugin extends JavaPlugin
 		
 		this.getCommand("raid").setExecutor(new RaidCommand(this));
 		this.getCommand("clanstop").setExecutor(new TopCommand(this));
+		this.getCommand("debug").setExecutor(new DebugCommand(this));
 		
 		if (config.getSchematic() == null)
 		{	
@@ -124,6 +133,30 @@ public class ClansPlugin extends JavaPlugin
 		}
 		
 		timer.startShieldCheckTask();
+		
+		Factions.getInstance().getAllFactions().forEach(faction ->
+		{
+			String id = faction.getId();
+			RegionManager rm = this.rmanager;
+			ProtectedRegion region = rm.getRegion(id + "-protect");
+			
+			if (region != null)
+			{			
+				Location a = Boundry.getLocation(region.getMinimumPoint());
+				Location b = Boundry.getLocation(region.getMaximumPoint());
+				faction.setCorners(new LazyLocation(a), new LazyLocation(b));
+			}
+			else
+			{
+				getLogger().info("Unable to get region for faction + " + faction.getTag());
+			}
+			
+			WrappedFaction fac = new WrappedFaction(faction);
+			fac.setChunks(new Cuboid(faction.getCornerA().getLocation(), 
+									 faction.getCornerB().getLocation()));
+			
+			playerManager.add(fac);
+		});
 		
 		final PointCalculation calc = new PointCalculation(this);
 		

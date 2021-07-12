@@ -1,10 +1,17 @@
 package me.kate.clans.raids;
 
+import java.util.List;
+
+import org.bukkit.Chunk;
+
 import com.massivecraft.factions.Faction;
+
+import me.kate.clans.utils.Cuboid;
 
 public class WrappedFaction 
 {
 	private Faction faction;
+	private List<Chunk> chunk;
 	private String id;
 	private Raid raid;
 	
@@ -17,6 +24,16 @@ public class WrappedFaction
 	public String getId()
 	{
 		return this.id;
+	}
+	
+	public void setChunks(Cuboid cube)
+	{
+		this.chunk = cube.getChunks();
+	}
+	
+	public List<Chunk> getChunks()
+	{
+		return this.chunk;
 	}
 	
 	public Faction getFaction()

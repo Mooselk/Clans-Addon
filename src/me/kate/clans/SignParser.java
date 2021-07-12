@@ -1,6 +1,7 @@
 package me.kate.clans;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -101,6 +102,23 @@ public class SignParser
 		for (OfflinePlayer player : Bukkit.getOfflinePlayers())
 			if (player.getName().equals(sign.getLine(1)))
 				return true;
+		return false;
+	}
+	
+	public boolean isMobDrops()
+	{
+		for (int i = 0; i < lines.length; i++)
+		{
+			String line = lines[i];
+			
+			if (line.equalsIgnoreCase("[MobDrops]") || line.contains("[MobDrops]"))
+			{
+				sign.setLine(i, ChatColor.DARK_BLUE + line);
+				sign.update();
+				return true;
+			}
+		}
+		
 		return false;
 	}
 }
