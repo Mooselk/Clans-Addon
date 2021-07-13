@@ -16,3 +16,8 @@ messages:
   SPAWNER_BREAK_RAIDED: "You can't break these while being raided!"
   SPAWNER_BREAK_MAX: "You have reached the maximum spawners for this raid! (%broken% / %max%)"
   SPAWNER_BROKEN: "You have broken a spawner! (%broken% / %max%)"
+  CORE_BREAK_OWN: "You can't break your own core!"
+  SIGN_BREAK_NO_PERMISSION: "This sign requires %role% or higher to break!"
+  SIGN_BREAK_NO_PLAYER_PERMISSION: "This sign can only be broken by %name% or a faction leader!"
+  CHEST_NO_PERMISSION: "This is not your chest to open!"
+  CHEST_OPEN_RAID: "You can't open your chests while being raided!"

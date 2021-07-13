@@ -33,6 +33,7 @@ import me.kate.clans.listeners.MonsterSpawnerListener;
 import me.kate.clans.listeners.PlayerInteractListener;
 import me.kate.clans.listeners.PlayerJoinListener;
 import me.kate.clans.listeners.PlayerQuitListener;
+import me.kate.clans.listeners.SignChangeListener;
 import me.kate.clans.listeners.SilkSpawnersSpawnerBreakListener;
 import me.kate.clans.listeners.factions.FactionCreateListener;
 import me.kate.clans.listeners.factions.FactionDisbandListener;
@@ -117,6 +118,7 @@ public class ClansPlugin extends JavaPlugin
 		this.getServer().getPluginManager().registerEvents(new FactionCreateListener(this), this);
 		this.getServer().getPluginManager().registerEvents(new FactionDisbandListener(this), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerInteractListener(this), this);
+		this.getServer().getPluginManager().registerEvents(new SignChangeListener(this), this);
 		this.getServer().getPluginManager().registerEvents(new EntityDeathListener(this), this);
 		
 		this.getCommand("raid").setExecutor(new RaidCommand(this));

@@ -17,8 +17,8 @@ import com.massivecraft.factions.perms.Role;
 
 import me.kate.clans.ClansPlugin;
 import me.kate.clans.SignParser;
+import me.kate.clans.config.Messages;
 import me.kate.clans.raids.Raid;
-import net.md_5.bungee.api.ChatColor;
 
 public class BlockBreakListener implements Listener
 {
@@ -54,14 +54,14 @@ public class BlockBreakListener implements Listener
 		if (!plugin.getFactionManager().getByFaction(player.getFaction()).isRaiding() && 
 				container.has(key, PersistentDataType.STRING)) 
 		{
-			player.sendMessage(ChatColor.RED + "You can't break your own core!");
+			player.sendMessage(Messages.CORE_BREAK_OWN);
 			event.setCancelled(true);
 			return;
 		}
 		
 		if (player.getFaction().getId().equals(container.get(key, PersistentDataType.STRING)))
 		{
-			player.sendMessage(ChatColor.RED + "You can't break your own core!");
+			player.sendMessage(Messages.CORE_BREAK_OWN);
 			event.setCancelled(true);
 			return;
 		}
@@ -69,7 +69,9 @@ public class BlockBreakListener implements Listener
 		final Raid raid = plugin.getRaidManager().getByFPlayer(player);
 		
 		if (raid == null) return;
-		
+		/**
+		 * TODO
+		 */
 		raid.getParticipants().getAttackingPlayers().forEach(players -> players.sendMessage("Your faction has been awarded %points% points for breaking the enemies core!"));
 		raid.getParticipants().getDefendingPlayers().forEach(players -> players.sendMessage("Your faction has lost %points% points for losing your core!"));
 	}
@@ -80,25 +82,25 @@ public class BlockBreakListener implements Listener
 		
 		if (block.getBlockData() instanceof WallSign)
 		{
-			SignParser parser = new SignParser(block);
+			final SignParser parser = new SignParser(block);
 			
 			if (!parser.isValid())
 				return;
 			
 			if (parser.signHasRole())
 			{
-				if (parser.getSignRole().isAtLeast(player.getRole()))
+				if (player.getRole().isAtLeast(parser.getSignRole()))
 					return;
 				
 				if (!player.hasFaction())
 				{
-					player.sendMessage("This sign requires admin or higher to break!");
+					player.sendMessage(Messages.SIGN_BREAK_NO_PERMISSION.replaceAll("%role%", parser.getSignName()));
 					event.setCancelled(true);
 				}
 				
-				if (!player.getRole().isAtLeast(Role.ADMIN))
+				if (!player.getRole().isAtLeast(parser.getSignRole()))
 				{
-					player.sendMessage("This sign requires admin or higher to break!");
+					player.sendMessage(Messages.SIGN_BREAK_NO_PERMISSION.replaceAll("%role%", parser.getSignRole().toString()));
 					event.setCancelled(true);
 				}
 			}
@@ -106,53 +108,13 @@ public class BlockBreakListener implements Listener
 			{
 				if (!parser.getSignName().equalsIgnoreCase(player.getName()))
 				{
-					
-					if (player.getRole().isAtLeast(Role.ADMIN))
+					if (player.getRole().isAtLeast(Role.COLEADER))
 						return;
 					
-					player.sendMessage("This sign can only be broken by " + parser.getSignName() + " or a faction admin!");
+					player.sendMessage(Messages.SIGN_BREAK_NO_PLAYER_PERMISSION.replaceAll("%name%", parser.getSignName()));
 					event.setCancelled(true);
 				}
 			}
 		}
 	}
-	
-//	private void handleSpawnerBreak(final BlockBreakEvent event, final FPlayer player)
-//	{
-//		if (!player.hasFaction()) return;
-//		
-//		final WrappedFaction faction = plugin.getFactionManager().getByFaction(player.getFaction());
-//		
-//		if (faction == null) return;
-//		if (!faction.isRaiding()) return;
-//		
-//		final Raid raid = faction.getRaid();
-//		final RaidParticipants parts = raid.getParticipants();
-//		
-//		int broken = raid.getSpawnersBroken();
-//		int max = raid.getMaxSpawnersBroken();
-//		
-//		if (parts.isDefendingPlayer(player))
-//		{
-//			player.sendMessage(Messages.SPAWNER_BREAK_RAIDED);
-//			event.setCancelled(true);
-//		} 
-//		else if (parts.isAttackingPlayer(player))
-//		{
-//			if (broken == max)
-//			{
-//				player.sendMessage(Messages.SPAWNER_BREAK_MAX
-//						.replace("%broken%", broken + "")
-//						.replace("%max%", max + ""));
-//				event.setCancelled(true);
-//				return;
-//			}
-//			
-//			raid.setSpawnersBroken(broken++);
-//			
-//			player.sendMessage(Messages.SPAWNER_BROKEN
-//					.replace("%broken%", broken + "")
-//					.replace("%max%", max + ""));
-//		}
-//	}
 }

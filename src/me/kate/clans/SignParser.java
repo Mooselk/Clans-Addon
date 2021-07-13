@@ -39,15 +39,15 @@ public class SignParser
 	
 	public boolean isValid()
 	{
-		if (!lines[0].equals("[Subclaim]"))
+		if (!lines[0].equalsIgnoreCase("[Subclaim]"))
 		{
 			return false;
 		}
-		if (lines[0].equals("[Subclaim]") && signHasRole())
+		if (lines[0].equalsIgnoreCase("[Subclaim]") && signHasRole())
 		{
 			return true;
 		}
-		if (lines[0].equals("[Subclaim]") && signHasName())
+		if (lines[0].equalsIgnoreCase("[Subclaim]") && signHasName())
 		{
 			return true;
 		}
@@ -78,30 +78,63 @@ public class SignParser
 	public boolean signHasRole()
 	{
 		for (Role role : Role.values())
-		{
-			if (lines[1].equalsIgnoreCase(role.toString()))
-			{
-				return true;
-			}
-		}
+			for (int i = 0; i < lines.length; i++)
+				if (role != null)
+					return true;
+		
 		return false;
 	}
 	
 	public Role getSignRole()
-	{
-		return Role.valueOf(sign.getLine(1).toUpperCase());
+	{	
+		for (int i = 0; i < lines.length; i++)
+		{
+			Role role = Role.valueOf(lines[i]);
+			
+			if (role != null)
+			{
+				return role;
+			}
+		}
+		
+		return null;
 	}
 	
 	public String getSignName()
 	{
-		return this.sign.getLine(1);
+		for (int i = 0; i < lines.length; i++)
+		{
+			if (!lines[i].equals(""))
+			{
+				return lines[i];
+			}
+		}
+		return "";
 	}
 	
 	public boolean signHasName()
 	{
 		for (OfflinePlayer player : Bukkit.getOfflinePlayers())
-			if (player.getName().equals(sign.getLine(1)))
-				return true;
+		{
+			for (int i = 0; i < lines.length; i++)
+			{
+				if (lines[i].equalsIgnoreCase(player.getName()))
+				{
+					return true;
+				}
+			}
+		}
+		
+		for (Player player1 : Bukkit.getOnlinePlayers())
+		{
+			for (int i = 0; i < lines.length; i++)
+			{
+				if (lines[i].equalsIgnoreCase(player1.getName()))
+				{
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 	
