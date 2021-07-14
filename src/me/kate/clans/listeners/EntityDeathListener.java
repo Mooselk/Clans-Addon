@@ -55,7 +55,7 @@ public class EntityDeathListener implements Listener
 		
 		if (wrapped.getChunks() == null)
 		{
-			Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> wrapped.getChunks());
+			Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> Util.chunkFix(faction));
 			Bukkit.getLogger().severe("Error loading Faction " + wrapped.getFaction().getTag() + " chunks, running task async to catch up!");
 			return;
 		}

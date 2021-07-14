@@ -15,7 +15,14 @@ import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import com.massivecraft.factions.Faction;
+import com.massivecraft.factions.util.LazyLocation;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+
 import me.kate.clans.ClansPlugin;
+import me.kate.clans.objects.Boundry;
+import me.kate.clans.raids.WrappedFaction;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_16_R3.EntityShulker;
 import net.minecraft.server.v1_16_R3.EntityTypes;
@@ -154,4 +161,30 @@ public class Util
                 return null;
         }
     }
+	
+	public static void chunkFix(Faction faction)
+	{
+		ClansPlugin plugin = ClansPlugin.getPlugin(ClansPlugin.class);
+		
+		String id = faction.getId();
+		RegionManager rm = plugin.getRegionManager();
+		ProtectedRegion region = rm.getRegion(id + "-protect");
+		
+		if (region != null)
+		{			
+			Location a = Boundry.getLocation(region.getMinimumPoint());
+			Location b = Boundry.getLocation(region.getMaximumPoint());
+			faction.setCorners(new LazyLocation(a), new LazyLocation(b));
+		}
+		else
+		{
+			plugin.getLogger().info("Unable to get region for faction + " + faction.getTag());
+		}
+		
+		WrappedFaction fac = new WrappedFaction(faction);
+		fac.setChunks(new Cuboid(faction.getCornerA().getLocation(), 
+								 faction.getCornerB().getLocation()));
+		
+		plugin.getFactionManager().add(fac);
+	}
 }

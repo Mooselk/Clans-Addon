@@ -1,5 +1,7 @@
 package me.kate.clans.listeners;
 
+import java.util.Collection;
+
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -19,6 +21,7 @@ import me.kate.clans.ClansPlugin;
 import me.kate.clans.SignParser;
 import me.kate.clans.config.Messages;
 import me.kate.clans.raids.Raid;
+import me.kate.clans.utils.Util;
 
 public class BlockBreakListener implements Listener
 {
@@ -35,6 +38,8 @@ public class BlockBreakListener implements Listener
 		FPlayer player = FPlayers.getInstance().getByPlayer(event.getPlayer());
 		
 		this.handleCoreBreak(event, player);
+		
+		this.handleChestBreak(event, player);
 		
 		this.handleSignBreak(event, player);
 	}
@@ -74,6 +79,20 @@ public class BlockBreakListener implements Listener
 		 */
 		raid.getParticipants().getAttackingPlayers().forEach(players -> players.sendMessage("Your faction has been awarded %points% points for breaking the enemies core!"));
 		raid.getParticipants().getDefendingPlayers().forEach(players -> players.sendMessage("Your faction has lost %points% points for losing your core!"));
+	}
+	
+	private void handleChestBreak(final BlockBreakEvent event, FPlayer player)
+	{
+		Block block = event.getBlock();
+		Collection<Block> signs = Util.findAttachedSigns(block);
+		
+		for (Block signBlock : signs)
+		{	
+			if (!new SignParser(signBlock).canOpenChest(player.getPlayer()))
+			{
+				event.setCancelled(true);
+			}
+		}
 	}
 	
 	private void handleSignBreak(final BlockBreakEvent event, FPlayer player)
